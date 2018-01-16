@@ -29,13 +29,13 @@ class App extends React.Component {
       display: {
         what: 'default'
       }
-    , players: [
-        { name: 'Gena',     power: 20, land: 10, bonus: 2}
-      , { name: 'Don',      power: 30, land: 12, bonus: 0}
-      , { name: 'Amanda',   power: 40, land: 14, bonus: 7}
-      , { name: 'Brandon',  power: 50, land: 16, bonus: 7}
-      , { name: 'Justin',   power: 60, land: 18, bonus: 0}
-      ]
+    , players: []
+    //  { name: 'Gena',     power: 20, land: 10, bonus: 2}
+    //, { name: 'Don',      power: 30, land: 12, bonus: 0}
+    //, { name: 'Amanda',   power: 40, land: 14, bonus: 7}
+    //, { name: 'Brandon',  power: 50, land: 16, bonus: 7}
+    //, { name: 'Justin',   power: 60, land: 18, bonus: 0}
+    //]
     , currentPlayer: 0
     }
     // prebinds
@@ -187,15 +187,6 @@ class App extends React.Component {
             </NavItem>
             <NavItem onClick={()=>{this.setState({display: {what: 'editPlayers'}})}}>
               <Glyphicon glyph="pencil"/> Edit Players
-            </NavItem>
-            <NavItem>
-              <Glyphicon glyph="arrow-down"/> Next Player's Turn
-            </NavItem>
-            <NavItem>
-              <Glyphicon glyph="arrow-up"/> Prev Player's Turn
-            </NavItem>
-            <NavItem>
-              <Glyphicon glyph="fire"/> Attack
             </NavItem>
           </Nav>
         </Navbar.Collapse>
