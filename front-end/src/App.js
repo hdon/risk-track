@@ -37,6 +37,7 @@ class App extends React.Component {
     //, { name: 'Justin',   power: 60, land: 18, bonus: 0}
     //]
     , currentPlayer: -1
+    , minSpawnRate: 3
     }
     // prebinds
     this.onSortPlayersEnd = this.onSortPlayersEnd.bind(this);
@@ -45,6 +46,8 @@ class App extends React.Component {
     this.advanceTurn = this.advanceTurn.bind(this);
     this.decrementPlayerPower = this.decrementPlayerPower.bind(this);
     this.playerTakeLand = this.playerTakeLand.bind(this);
+    this.configMinimumSpawnRate = this.configMinimumSpawnRate.bind(this);
+    this.configMinimumSpawnRateDone = this.configMinimumSpawnRateDone.bind(this);
   }
   onSortPlayersEnd({ oldIndex, newIndex }) {
     this.setState({
@@ -82,11 +85,33 @@ class App extends React.Component {
       }
     })
   }
+  configMinimumSpawnRate() {
+    this.setState({
+      display: {
+        what: 'configMinimumSpawnRate'
+      }
+    })
+  }
+  configMinimumSpawnRateDone(minSpawnRate) {
+    this.setState({
+      minSpawnRate
+    , display: {
+        what: 'default'
+      }
+    })
+  }
   advanceTurn() {
     const currentPlayer = (this.state.currentPlayer+1) % this.state.players.length;
+    const minSpawnRate = this.state.minSpawnRate;
     const players = this.state.players.map((player, iPlayer) =>
       iPlayer == currentPlayer
-    ? { ...player, power: player.power + Math.floor(player.land/3) + player.bonus }
+    ? {
+        ...player
+      , power: player.power + Math.max(
+          Math.floor(player.land/3) + player.bonus
+        , minSpawnRate
+        )
+      }
     : player
     );
     this.setState({
@@ -128,6 +153,13 @@ class App extends React.Component {
       editDone={this.editPlayerAttributeDone}
     />
   }
+  configMinimumSpawnRateRender() {
+    return <SpinModal
+      title="Set Minimum Spawn Rate"
+      value={this.state.minSpawnRate}
+      editDone={this.configMinimumSpawnRateDone}
+    />
+  }
   defaultRender() {
     return this.state.players.length
     ? <div>
@@ -144,13 +176,16 @@ class App extends React.Component {
             <tr>
               <th>Name</th>
               <th>Bonus</th>
-              <th className="" colspan="2">Land</th>
-              <th className="power" colspan="2">Power</th>
+              <th className="" colSpan="2">Land</th>
+              <th className="power" colSpan="2">Power</th>
             </tr>
           </thead>
           <tbody>
             { this.state.players.map(({name, power, land, bonus}, iPlayer) =>
-                <tr className={this.state.currentPlayer == iPlayer ? 'success' : 'danger'}>
+                <tr
+                  className={this.state.currentPlayer == iPlayer ? 'success' : 'danger'}
+                  key={iPlayer}
+                >
                   <td>{name}</td>
                   <td>
                     <Badge
@@ -231,6 +266,9 @@ class App extends React.Component {
             </NavItem>
             <NavItem onClick={()=>{this.setState({display: {what: 'editPlayers'}})}}>
               <Glyphicon glyph="pencil"/> Edit Players
+            </NavItem>
+            <NavItem onClick={this.configMinimumSpawnRate}>
+              <Glyphicon glyph="asterisk"/> Spawn Rate
             </NavItem>
           </Nav>
         </Navbar.Collapse>
