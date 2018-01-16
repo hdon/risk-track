@@ -43,6 +43,8 @@ class App extends React.Component {
     this.addPlayer = this.addPlayer.bind(this);
     this.editPlayerAttributeDone = this.editPlayerAttributeDone.bind(this);
     this.advanceTurn = this.advanceTurn.bind(this);
+    this.decrementPlayerPower = this.decrementPlayerPower.bind(this);
+    this.playerTakeLand = this.playerTakeLand.bind(this);
   }
   onSortPlayersEnd({ oldIndex, newIndex }) {
     this.setState({
@@ -92,6 +94,27 @@ class App extends React.Component {
     , players
     })
   }
+  decrementPlayerPower(targetPlayer) {
+    this.setState({
+      players: this.state.players.map((player, iPlayer) =>
+        targetPlayer == iPlayer
+      ? { ...player, power: player.power-1 }
+      : player
+      )
+    })
+  }
+  playerTakeLand(targetPlayer) {
+    const currentPlayer = this.state.currentPlayer;
+    this.setState({
+      players: this.state.players.map((player, iPlayer) =>
+        targetPlayer == iPlayer
+      ? { ...player, land: player.land-1 }
+      : currentPlayer == iPlayer
+      ? { ...player, land: player.land+1 }
+      : player
+      )
+    })
+  }
 
   editPlayerAttributeRender() {
     const player = this.state.players[this.state.display.iPlayer];
@@ -116,13 +139,13 @@ class App extends React.Component {
             Next Turn
           </Button>
         </div>
-        <Table className="home-player-table">
+        <Table bordered className="home-player-table">
           <thead>
             <tr>
               <th>Name</th>
-              <th>Power</th>
-              <th>Land</th>
               <th>Bonus</th>
+              <th className="" colspan="2">Land</th>
+              <th className="power" colspan="2">Power</th>
             </tr>
           </thead>
           <tbody>
@@ -131,9 +154,9 @@ class App extends React.Component {
                   <td>{name}</td>
                   <td>
                     <Badge
-                      onClick={this.editPlayerAttribute('power', iPlayer)}
+                      onClick={this.editPlayerAttribute('bonus', iPlayer)}
                     >
-                      {power}
+                      {bonus}
                     </Badge>
                   </td>
                   <td>
@@ -143,11 +166,31 @@ class App extends React.Component {
                       {land}
                     </Badge>
                   </td>
+                  <td className="power-dec">
+                  {
+                    this.state.currentPlayer == iPlayer
+                  ? null
+                  : <Badge
+                      onClick={this.playerTakeLand.bind(this, iPlayer)}
+                      className="red-badge"
+                    >
+                      -1
+                    </Badge>
+                  }
+                  </td>
                   <td>
                     <Badge
-                      onClick={this.editPlayerAttribute('bonus', iPlayer)}
+                      onClick={this.editPlayerAttribute('power', iPlayer)}
                     >
-                      {bonus}
+                      {power}
+                    </Badge>
+                  </td>
+                  <td className="power-dec">
+                    <Badge
+                      onClick={this.decrementPlayerPower.bind(this, iPlayer)}
+                      className="red-badge"
+                    >
+                      -1
                     </Badge>
                   </td>
                 </tr>

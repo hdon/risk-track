@@ -1,18 +1,9 @@
-.home-player-table > * > * > :nth-child(1) {
+.home-player-table th,
+.home-player-table td {
   width: 20%;
+  text-align: center;
 }
-.home-player-table > * > * > :nth-child(2) {
-  width: 20%;
-  text-align: right;
-}
-.home-player-table > * > * > :nth-child(3) {
-  width: 20%;
-  text-align: right;
-}
-.home-player-table > * > * > :nth-child(4) {
-  width: 20%;
-  text-align: right;
-}
+
 .edit-player-attribute-figure {
   text-align: center;
   display: block;
@@ -23,6 +14,9 @@
   display: block;
   font-size: 15vh;
   color: #aaa;
+}
+.red-badge {
+  background-color: #f77;
 }
 /* I guess these are bs4 features? */
 .d-flex {
