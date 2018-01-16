@@ -36,7 +36,7 @@ class App extends React.Component {
     //, { name: 'Brandon',  power: 50, land: 16, bonus: 7}
     //, { name: 'Justin',   power: 60, land: 18, bonus: 0}
     //]
-    , currentPlayer: 0
+    , currentPlayer: -1
     }
     // prebinds
     this.onSortPlayersEnd = this.onSortPlayersEnd.bind(this);
@@ -53,8 +53,9 @@ class App extends React.Component {
     this.setState({
       players: [ ...this.state.players, {
         name: newPlayerName
-      , power: Math.floor(Math.random()*100)
-      , land:  Math.floor(Math.random()*40)
+      , power: 24
+      , land:  8
+      , bonus: 0
       }]
     })
   }
