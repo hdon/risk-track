@@ -3,6 +3,7 @@ import AddPlayerModal from './components/AddPlayerModal';
 import PlayerListEdit from './components/PlayerListEdit';
 import SpinModal from './components/SpinModal';
 import { arrayMove } from 'react-sortable-hoc';
+import ClickNHold from 'react-click-n-hold';
 import {
   Well
 , Glyphicon
@@ -29,13 +30,13 @@ class App extends React.Component {
       display: {
         what: 'default'
       }
-    , players: []
-    //  { name: 'Gena',     power: 20, land: 10, bonus: 2}
-    //, { name: 'Don',      power: 30, land: 12, bonus: 0}
-    //, { name: 'Amanda',   power: 40, land: 14, bonus: 7}
-    //, { name: 'Brandon',  power: 50, land: 16, bonus: 7}
-    //, { name: 'Justin',   power: 60, land: 18, bonus: 0}
-    //]
+    , players: [
+        { name: 'Gena',     power: 20, land: 10, bonus: 2}
+      , { name: 'Don',      power: 30, land: 12, bonus: 0}
+      , { name: 'Amanda',   power: 40, land: 14, bonus: 7}
+      , { name: 'Brandon',  power: 50, land: 16, bonus: 7}
+      , { name: 'Justin',   power: 60, land: 18, bonus: 0}
+      ]
     , currentPlayer: -1
     , minSpawnRate: 3
     }
@@ -176,8 +177,8 @@ class App extends React.Component {
             <tr>
               <th>Name</th>
               <th>Bonus</th>
-              <th className="" colSpan="2">Land</th>
-              <th className="power" colSpan="2">Power</th>
+              <th>Land</th>
+              <th>Power</th>
             </tr>
           </thead>
           <tbody>
@@ -188,45 +189,49 @@ class App extends React.Component {
                 >
                   <td>{name}</td>
                   <td>
-                    <Badge
-                      onClick={this.editPlayerAttribute('bonus', iPlayer)}
+                    <ClickNHold
+                      time={0.5}
+                      onClickNHold={this.editPlayerAttribute('bonus', iPlayer)}
                     >
-                      {bonus}
-                    </Badge>
+                      <div
+                        onClick={this.editPlayerAttribute('bonus', iPlayer)}
+                      >
+                        <Badge
+                        >
+                          {bonus}
+                        </Badge>
+                      </div>
+                    </ClickNHold>
                   </td>
                   <td>
-                    <Badge
-                      onClick={this.editPlayerAttribute('land', iPlayer)}
+                    <ClickNHold
+                      time={0.5}
+                      onClickNHold={this.editPlayerAttribute('land', iPlayer)}
                     >
-                      {land}
-                    </Badge>
-                  </td>
-                  <td className="power-dec">
-                  {
-                    this.state.currentPlayer == iPlayer
-                  ? null
-                  : <Badge
-                      onClick={this.playerTakeLand.bind(this, iPlayer)}
-                      className="red-badge"
-                    >
-                      -1
-                    </Badge>
-                  }
+                      <div
+                        onClick={this.playerTakeLand.bind(this, iPlayer)}
+                      >
+                        <Badge
+                        >
+                          {land}
+                        </Badge>
+                      </div>
+                    </ClickNHold>
                   </td>
                   <td>
-                    <Badge
-                      onClick={this.editPlayerAttribute('power', iPlayer)}
+                    <ClickNHold
+                      time={0.5}
+                      onClickNHold={this.editPlayerAttribute('power', iPlayer)}
                     >
-                      {power}
-                    </Badge>
-                  </td>
-                  <td className="power-dec">
-                    <Badge
-                      onClick={this.decrementPlayerPower.bind(this, iPlayer)}
-                      className="red-badge"
-                    >
-                      -1
-                    </Badge>
+                      <div
+                        onClick={this.decrementPlayerPower.bind(this, iPlayer)}
+                      >
+                        <Badge
+                        >
+                          {power}
+                        </Badge>
+                      </div>
+                    </ClickNHold>
                   </td>
                 </tr>
               )

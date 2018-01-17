@@ -15,8 +15,14 @@
   font-size: 15vh;
   color: #aaa;
 }
-.red-badge {
-  background-color: #f77;
+/* to prevent long-press user interaction from selecting text instead of
+ * activating react-click-n-hold behavior
+ */
+body {
+  user-select: none;
+}
+.cnh_holding .badge {
+  background-color: black;
 }
 /* I guess these are bs4 features? */
 .d-flex {
