@@ -4,6 +4,7 @@ import PlayerListEdit from './components/PlayerListEdit';
 import SpinModal from './components/SpinModal';
 import { arrayMove } from 'react-sortable-hoc';
 import ClickNHold from 'react-click-n-hold';
+import * as rLS from 'react-localstorage';
 import {
   Well
 , Glyphicon
@@ -50,6 +51,16 @@ class App extends React.Component {
     this.configMinimumSpawnRate = this.configMinimumSpawnRate.bind(this);
     this.configMinimumSpawnRateDone = this.configMinimumSpawnRateDone.bind(this);
   }
+
+  componentWillUpdate() {
+    /* glue for local storage of our component state */
+    rLS.componentWillUpdate.apply(this, arguments);
+  }
+  componentDidMount() {
+    /* glue for local storage of our component state */
+    rLS.componentDidMount.apply(this, arguments);
+  }
+
   onSortPlayersEnd({ oldIndex, newIndex }) {
     this.setState({
       players: arrayMove(this.state.players, oldIndex, newIndex)
