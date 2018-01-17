@@ -354,13 +354,6 @@ class App extends React.Component {
       onRm={this.rmPlayer}
     />
   }
-  /* XXX what is this? */
-  addPlayerRender() {
-    return <AddPlayerModal
-      onClose={()=>{this.setState({display:{what:'default'}})}}
-      onAdd={this.addPlayer}
-    />
-  }
   render() {
     return <div>
       <Navbar inverse collapseOnSelect>
