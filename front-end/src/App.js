@@ -5,6 +5,7 @@ import SpinModal from './components/SpinModal';
 import { arrayMove } from 'react-sortable-hoc';
 import ClickNHold from 'react-click-n-hold';
 import NewGameConfirmModal from './components/NewGameConfirmModal';
+import PowerProjectionChart from './components/PowerProjectionChart';
 import * as rLS from 'react-localstorage';
 import * as _ from 'lodash';
 import {
@@ -223,6 +224,12 @@ class App extends React.Component {
     })
   }
 
+  powerProjectionRender() {
+    return <PowerProjectionChart
+      players={this.state.players}
+      minSpawnRate={this.state.minSpawnRate}
+    />
+  }
   newGameModalRender() {
     return <NewGameConfirmModal
       onYes={this.newGame}
@@ -376,6 +383,12 @@ class App extends React.Component {
             </NavItem>
             <NavItem onClick={this.configMinimumSpawnRate}>
               <Glyphicon glyph="asterisk"/> Spawn Rate
+            </NavItem>
+            <NavItem onClick={()=>{this.setState({display: {what: 'powerProjection'}})}}>
+              { /* TODO how do glyphicons come across for vision impaired
+              users? "signal" is not meaningful here, but visually this
+              icon also resembles a bar chart */ }
+              <Glyphicon glyph="signal"/> Power Projection Chart
             </NavItem>
           </Nav>
         </Navbar.Collapse>
