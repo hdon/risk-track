@@ -4,7 +4,9 @@ import PlayerListEdit from './components/PlayerListEdit';
 import SpinModal from './components/SpinModal';
 import { arrayMove } from 'react-sortable-hoc';
 import ClickNHold from 'react-click-n-hold';
+import NewGameConfirmModal from './components/NewGameConfirmModal';
 import * as rLS from 'react-localstorage';
+import * as _ from 'lodash';
 import {
   Well
 , Glyphicon
@@ -24,37 +26,60 @@ import {
 } from 'react-bootstrap';
 import './App.css';
 
+/* Bump this version number if you make a change which is not compatible
+ * with older states saved to localStorage.
+ *
+ * TODO capability to migrate/upgrade old states to new versions?
+ *
+ * TODO prompt user for what to do with their old data?
+ *
+ * TODO maybe don't overwrite old-version state data and just keep it
+ * around so the user can load up an old version of the software and still
+ * operate their old data?
+ *
+ * NOTE this project isn't really important enough to warrant this much
+ * thought being put into it :3
+ */
+const STATE_VERSION = 0;
+const INITIAL_STATE = {
+  display: {
+    what: 'editPlayers'
+  }
+, players: []
+, currentPlayer: -1
+, minSpawnRate: 3
+, stateVersion: STATE_VERSION
+, rememberedPlayerNames: []
+};
+
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      display: {
-        what: 'default'
-      }
-    , players: []
-    //  { name: 'Gena',     power: 20, land: 10, bonus: 2}
-    //, { name: 'Don',      power: 30, land: 12, bonus: 0}
-    //, { name: 'Amanda',   power: 40, land: 14, bonus: 7}
-    //, { name: 'Brandon',  power: 50, land: 16, bonus: 7}
-    //, { name: 'Justin',   power: 60, land: 18, bonus: 0}
-    //]
-    , currentPlayer: -1
-    , minSpawnRate: 3
-    }
+    /* NOTE this state will be blown away by react-localstorage in
+     * componentDidMount() if this isn't the first time we're running the
+     * application, unless the old state is not STATE_VERSION in which case
+     * it will be deleted.
+     */
+    this.state = INITIAL_STATE;
     // prebinds
     this.onSortPlayersEnd = this.onSortPlayersEnd.bind(this);
     this.addPlayer = this.addPlayer.bind(this);
+    this.rmPlayer = this.rmPlayer.bind(this);
     this.editPlayerAttributeDone = this.editPlayerAttributeDone.bind(this);
     this.advanceTurn = this.advanceTurn.bind(this);
     this.decrementPlayerPower = this.decrementPlayerPower.bind(this);
     this.playerTakeLand = this.playerTakeLand.bind(this);
     this.configMinimumSpawnRate = this.configMinimumSpawnRate.bind(this);
     this.configMinimumSpawnRateDone = this.configMinimumSpawnRateDone.bind(this);
+    this.newGame = this.newGame.bind(this);
   }
 
-  componentWillUpdate() {
+  componentWillUpdate(nextProps, nextState) {
     /* glue for local storage of our component state */
     rLS.componentWillUpdate.apply(this, arguments);
+    /* check version of state and reinitialize if it doesn't match */
+    if (nextState.stateVersion !== STATE_VERSION)
+      this.setState(INITIAL_STATE);
   }
   componentDidMount() {
     /* glue for local storage of our component state */
@@ -62,6 +87,16 @@ class App extends React.Component {
   }
 
   onSortPlayersEnd({ oldIndex, newIndex }) {
+    /* refuse to sort when either index is out of bounds; the list contains
+     * representations of rememberedPlayerNames after its representations
+     * of included players, which we make not sortable here
+     *
+     * TODO maybe make them sortable separately? idk
+     */
+    const numPlayers = this.state.players.length;
+    if (oldIndex >= numPlayers || newIndex >= numPlayers)
+      return;
+    
     this.setState({
       players: arrayMove(this.state.players, oldIndex, newIndex)
     })
@@ -74,6 +109,18 @@ class App extends React.Component {
       , land:  8
       , bonus: 0
       }]
+    })
+  }
+  rmPlayer(playerName) {
+    const rememberedPlayerNames = _.uniq(
+      _.concat(
+        _.map(this.state.players, 'name')
+      , this.state.rememberedPlayerNames
+      )
+    );
+    this.setState({
+      players: this.state.players.filter(p => p.name !== playerName)
+    , rememberedPlayerNames
     })
   }
   editPlayerAttribute(attribute, iPlayer) {
@@ -152,7 +199,36 @@ class App extends React.Component {
       )
     })
   }
+  newGame() {
+    console.log('newGame()');
+    /* deduplicate player names for storage */
+    let rememberedPlayerNames = {};
+    console.log('state.players=', this.state.players);
+    this.state.players.forEach(p =>
+      rememberedPlayerNames[p.name] = 0
+    );
+    console.log('state.rememberedPlayerNames=', this.state.rememberedPlayerNames);
+    this.state.rememberedPlayerNames.forEach(name =>
+      rememberedPlayerNames[name] = 0
+    );
+    rememberedPlayerNames = Object.keys(rememberedPlayerNames);
+    /* new game state, plus new remembered names list */
+    this.setState({
+      players: []
+    , rememberedPlayerNames
+    , currentPlayer: -1
+    , display: {
+        what: 'editPlayers'
+      }
+    })
+  }
 
+  newGameModalRender() {
+    return <NewGameConfirmModal
+      onYes={this.newGame}
+      onNo={()=>{this.setState({display: {what: 'default'}})}}
+    />
+  }
   editPlayerAttributeRender() {
     const player = this.state.players[this.state.display.iPlayer];
     const playerName = player.name;
@@ -254,12 +330,31 @@ class App extends React.Component {
     return null;
   }
   editPlayersRender() {
+    const playersByName = {};
+    this.state.players.forEach(p =>
+      playersByName[p.name] = {
+        name: p.name
+      , included: true
+      }
+    );
+    this.state.rememberedPlayerNames.forEach(name => {
+      if (!(name in playersByName)) {
+        playersByName[name] = {
+          name
+        , included: false
+        }
+      }
+    });
+    const players = Object.values(playersByName);
+
     return <PlayerListEdit
-      players={this.state.players}
+      players={players}
       onSortPlayersEnd={this.onSortPlayersEnd}
       onAdd={this.addPlayer}
+      onRm={this.rmPlayer}
     />
   }
+  /* XXX what is this? */
   addPlayerRender() {
     return <AddPlayerModal
       onClose={()=>{this.setState({display:{what:'default'}})}}
@@ -279,6 +374,9 @@ class App extends React.Component {
           <Nav>
             <NavItem onClick={()=>{this.setState({display: {what: 'default'}})}}>
               <Glyphicon glyph="home"/> Home
+            </NavItem>
+            <NavItem onClick={()=>{this.setState({display: {what: 'newGameModal'}})}}>
+              <Glyphicon glyph="off"/> New Game
             </NavItem>
             <NavItem onClick={()=>{this.setState({display: {what: 'editPlayers'}})}}>
               <Glyphicon glyph="pencil"/> Edit Players

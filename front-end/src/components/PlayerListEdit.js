@@ -20,6 +20,7 @@ class PlayerListEdit extends React.Component {
     this.getValidationState = this.getValidationState.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.onAdd = this.onAdd.bind(this);
+    this.onToggleRemembered = this.onToggleRemembered.bind(this);
   }
   onAdd(ev) {
     ev.preventDefault();
@@ -27,6 +28,12 @@ class PlayerListEdit extends React.Component {
     this.setState({
       newPlayerName: ''
     })
+  }
+  onToggleRemembered(name, included) {
+    if (included)
+      this.props.onAdd(name);
+    else
+      this.props.onRm(name);
   }
   getValidationState() {
     return this.state.newPlayerName.length == 0
@@ -60,6 +67,7 @@ class PlayerListEdit extends React.Component {
         ?  <PlayerList
             players={this.props.players}
             onSortEnd={this.props.onSortPlayersEnd}
+            onToggle={this.onToggleRemembered}
            />
         : <Well>Looks like you have no players</Well>
       }

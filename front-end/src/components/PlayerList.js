@@ -3,10 +3,15 @@ import { ListGroup } from 'react-bootstrap';
 import { SortableContainer } from 'react-sortable-hoc';
 import PlayerListItem from './PlayerListItem';
 
-export default SortableContainer(({players}) => <ListGroup>
+export default SortableContainer(({players, onToggle}) => <ListGroup>
   {
     players.map((player, index) =>
-      <PlayerListItem key={index} index={index} player={player} />
+      <PlayerListItem
+        key={index}
+        index={index}
+        player={player}
+        onToggle={onToggle}
+      />
     )
   }
 </ListGroup>);
