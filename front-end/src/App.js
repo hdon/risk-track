@@ -388,7 +388,7 @@ class App extends React.Component {
               { /* TODO how do glyphicons come across for vision impaired
               users? "signal" is not meaningful here, but visually this
               icon also resembles a bar chart */ }
-              <Glyphicon glyph="signal"/> Power Projection Chart
+              <Glyphicon glyph="signal"/> Troop Power Projection
             </NavItem>
           </Nav>
         </Navbar.Collapse>
