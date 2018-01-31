@@ -11,7 +11,8 @@ export default SortableElement(({player, onToggle}) =>
       checked={player.included}
       inline
       onChange={ev=>{onToggle(player.name, ev.target.checked)}}
-    />
-    {player.name}
+    >
+      {player.name}
+    </Checkbox>
   </ListGroupItem>
 )
