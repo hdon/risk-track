@@ -6,6 +6,7 @@ import { arrayMove } from 'react-sortable-hoc';
 import ClickNHold from 'react-click-n-hold';
 import NewGameConfirmModal from './components/NewGameConfirmModal';
 import PowerProjectionChart from './components/PowerProjectionChart';
+import EditableFigure from './components/EditableFigure';
 import * as rLS from 'react-localstorage';
 import * as _ from 'lodash';
 import {
@@ -282,51 +283,21 @@ class App extends React.Component {
                   key={iPlayer}
                 >
                   <td>{name}</td>
-                  <td>
-                    <ClickNHold
-                      time={0.5}
-                      onClickNHold={this.editPlayerAttribute('bonus', iPlayer)}
-                    >
-                      <div
-                        onClick={this.editPlayerAttribute('bonus', iPlayer)}
-                      >
-                        <Badge
-                        >
-                          {bonus}
-                        </Badge>
-                      </div>
-                    </ClickNHold>
-                  </td>
-                  <td>
-                    <ClickNHold
-                      time={0.5}
-                      onClickNHold={this.editPlayerAttribute('land', iPlayer)}
-                    >
-                      <div
-                        onClick={this.playerTakeLand.bind(this, iPlayer)}
-                      >
-                        <Badge
-                        >
-                          {land}
-                        </Badge>
-                      </div>
-                    </ClickNHold>
-                  </td>
-                  <td>
-                    <ClickNHold
-                      time={0.5}
-                      onClickNHold={this.editPlayerAttribute('power', iPlayer)}
-                    >
-                      <div
-                        onClick={this.decrementPlayerPower.bind(this, iPlayer)}
-                      >
-                        <Badge
-                        >
-                          {power}
-                        </Badge>
-                      </div>
-                    </ClickNHold>
-                  </td>
+                  <EditableFigure
+                    onClick={this.editPlayerAttribute('bonus', iPlayer)}
+                    onClickNHold={this.editPlayerAttribute('bonus', iPlayer)}
+                    text={bonus}
+                  />
+                  <EditableFigure
+                    onClickNHold={this.editPlayerAttribute('land', iPlayer)}
+                    onClick={this.playerTakeLand.bind(this, iPlayer)}
+                    text={land}
+                  />
+                  <EditableFigure
+                    onClickNHold={this.editPlayerAttribute('power', iPlayer)}
+                    onClick={this.decrementPlayerPower.bind(this, iPlayer)}
+                    text={power}
+                  />
                 </tr>
               )
             }
