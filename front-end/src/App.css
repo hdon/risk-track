@@ -31,3 +31,21 @@ body {
 .justify-content-between {
   justify-content: space-between;
 }
+/* Used for pop-out animation of figures when edited with tap */
+.homeFigure {
+  position: relative;
+}
+.homeFigure .pop {
+  position: absolute;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 1s, transform 1s;
+}
+.homeFigure .pop-show {
+  visibility: visible;
+  opacity: 0;
+  transform: scale(10);
+  transition: opacity 1s ease, transform 1s;
+}
