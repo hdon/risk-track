@@ -52,6 +52,7 @@ const INITIAL_STATE = {
 , minSpawnRate: 3
 , stateVersion: STATE_VERSION
 , rememberedPlayerNames: []
+, pop: null
 };
 
 class App extends React.Component {
@@ -180,7 +181,7 @@ class App extends React.Component {
     , players
     })
   }
-  decrementPlayerPower(targetPlayer) {
+  decrementPlayerPower(targetPlayer, ev) {
     this.setState({
       players: this.state.players.map((player, iPlayer) =>
         targetPlayer == iPlayer
@@ -199,6 +200,11 @@ class App extends React.Component {
       ? { ...player, land: player.land+1 }
       : player
       )
+    , pop: {
+        field: 'land'
+      , player: targetPlayer
+      , text: '-1'
+      }
     })
   }
   newGame() {
@@ -257,6 +263,8 @@ class App extends React.Component {
     />
   }
   defaultRender() {
+    const pop = this.state.pop;
+
     return this.state.players.length
     ? <div>
         <div className="d-flex justify-content-between">
@@ -292,6 +300,7 @@ class App extends React.Component {
                     onClickNHold={this.editPlayerAttribute('land', iPlayer)}
                     onClick={this.playerTakeLand.bind(this, iPlayer)}
                     text={land}
+                    popText={pop&&pop.field=='land'&&pop.player==iPlayer&&pop.text}
                   />
                   <EditableFigure
                     onClickNHold={this.editPlayerAttribute('power', iPlayer)}

@@ -9,6 +9,9 @@ export default props => <td>
         {props.text}
       </Badge>
       { /* TODO i really don't like this className assignment */ }
+      <span className={'pop'+(props.popText?' pop-show':'')}>
+        { props.popText }
+      </span>
     </div>
   </ClickNHold>
 </td>
